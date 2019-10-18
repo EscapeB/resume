@@ -1,0 +1,73 @@
+/**
+ * The resume looks not good, we need to add some style.
+ */
+.work {
+  display: block;
+  overflow: auto;
+  box-shadow: -4px 4px 2px 0 rgba(0, 0, 0, 0.3);
+  padding: 10px;
+}
+.work h1 span {
+  font-size: 1em;
+}
+.work h2:nth-child(2) + ul,
+.work h2:nth-child(4) + ul {
+  display: flex;
+  flex-wrap: wrap;
+}
+.work h2:nth-child(2) + ul > li,
+.work h2:nth-child(4) + ul > li {
+  width: 50%;
+  padding: 5px;
+}
+.work a {
+  text-decoration: none;
+}
+.work li > p:nth-child(2) {
+  word-break: break-all;
+  white-space: pre-wrap;
+  font-size: 13px;
+  text-indent: 20px;
+  letter-spacing: 0.1px;
+  line-height: 16px;
+}
+.work .education-item {
+  display: flex;
+}
+.work .education-item span {
+  margin-right: 2.5rem;
+}
+
+/**
+  * Then, we need to hide our editor
+  */
+@keyframes hide_editor {
+  from {
+    transform: translate3d(0%, 100%, 1px);
+  }
+  to {
+    transform: translate3d(0%, 300%, 1px);
+    height: 0;
+    padding: 0;
+  }
+}
+@keyframes show_resume {
+  from {
+    height: 50%;
+  }
+  to {
+    height: 100%;
+    transform: translateY(0);
+  }
+}
+.work {
+  animation: show_resume 0.5s ease-in-out 0.5s forwards;
+}
+
+.editor {
+  animation: hide_editor 0.2s ease-in-out forwards;
+}
+
+/**
+  * Everything is done !
+  */
