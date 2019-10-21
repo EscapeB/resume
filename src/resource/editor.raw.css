@@ -21,10 +21,11 @@
  *
  * Working in this big empty space is tough.
  *
- * We are more familiar with some editor like sublime or vscode.
+ * We gonna to make an simple editor.
  *
  * Let's make it.
 */
+
 .editor {
   background: #303030;
   border: 1px solid #ccc;
@@ -68,12 +69,10 @@
 */
 .editor {
   height: 50%;
-  transform: translateY(100%);
 }
 
 .work {
   height: 50%;
-  transform: translateY(-100%);
   overflow: auto;
   white-space: pre-wrap;
   word-break: break-all;

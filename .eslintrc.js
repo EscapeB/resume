@@ -22,5 +22,6 @@ module.exports = {
   rules: {
     semi: 'error',
     noAny: 0,
+    'no-debugger': 0,
   },
 };

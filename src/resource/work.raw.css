@@ -43,12 +43,11 @@
   */
 @keyframes hide_editor {
   from {
-    transform: translate3d(0%, 100%, 1px);
   }
   to {
-    transform: translate3d(0%, 300%, 1px);
     height: 0;
     padding: 0;
+    border: none;
   }
 }
 @keyframes show_resume {
@@ -57,7 +56,6 @@
   }
   to {
     height: 100%;
-    transform: translateY(0);
   }
 }
 .work {

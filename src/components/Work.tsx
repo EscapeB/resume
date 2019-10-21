@@ -1,5 +1,4 @@
 import React, { forwardRef, Ref } from 'react';
-// import '../resource/work.scss';
 
 export interface WorkProps {
   mdStr?: string;

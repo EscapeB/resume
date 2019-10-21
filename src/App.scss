@@ -1,3 +1,11 @@
+#root {
+  position: absolute;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
 .App {
   height: 100%;
   width: 100%;
@@ -16,14 +24,6 @@
   i:hover {
     color: #1890ff;
   }
-}
-#root {
-  position: absolute;
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
 }
 .work {
   height: 0;
