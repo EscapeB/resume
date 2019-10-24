@@ -1,4 +1,5 @@
 import React, { FunctionComponent, PropsWithChildren } from 'react';
+
 export interface ControllerProps {
   onSkip: () => void;
   onPause: () => void;
@@ -11,7 +12,7 @@ const Controller: FunctionComponent<ControllerProps> = (
   return (
     <div className="controller">
       {props.pauseStatus ? (
-        <i className="iconfont" onClick={props.onStart ? props.onStart : undefined}>
+        <i className="iconfont shining" onClick={props.onStart ? props.onStart : undefined}>
           &#xe614;
         </i>
       ) : (
@@ -23,8 +24,6 @@ const Controller: FunctionComponent<ControllerProps> = (
       <i className="iconfont" onClick={props.onSkip ? props.onSkip : undefined}>
         &#xe60e;
       </i>
-
-      {/* <button onClick={props.}></button> */}
     </div>
   );
 };

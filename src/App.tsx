@@ -18,7 +18,7 @@ enum TARGET {
 //animation speed
 const speed = process.env.NODE_ENV === 'development' ? 1 : 16;
 const App: React.FC = () => {
-  // refs
+  /* refs */
   const editorRef = useRef<HTMLPreElement>(null);
   const workRef = useRef<HTMLPreElement>(null);
   // code buffer
@@ -29,17 +29,17 @@ const App: React.FC = () => {
   const workBuffer = useRef<string>('');
   // whether the comment is open
   const openComment = useRef<boolean>(false);
-  // skip
-  const isSkiped = useRef<boolean>(false);
   // pause
-  const isPasued = useRef<boolean>(true);
+  const isPaused = useRef<boolean>(true);
+  // isEnd
+  const isEnd = useRef<boolean>(true);
 
-  // hook state
+  /* hook state */
   const [style, setStyle] = useState<string>('');
   const [editorStr, setEditorStr] = useState<string>('');
   const [workStr, setWorkStr] = useState<string>('');
+  const [isPausedView, setIsPausedView] = useState<boolean>(true);
 
-  // hook functions
   /**
    *
    * @param target target element to scroll
@@ -56,14 +56,8 @@ const App: React.FC = () => {
    * @param target element to write
    * @param chars chars to write
    * @param updateView wheather upate view
-   * @param pos position of this write
    */
-  function writeChar(
-    target: TARGET,
-    chars: string,
-    updateView = true,
-    pos: number | undefined = 0
-  ): string {
+  function writeChar(target: TARGET, chars: string, updateView = true): void {
     // if target is style just write
     if (target === TARGET.STYLESHEET) {
       styleBuffer.current += chars;
@@ -74,12 +68,11 @@ const App: React.FC = () => {
           setStyle(styleBuffer.current);
         }
       }
-      return styleBuffer.current;
     }
     // if target is editor, we need to handle the chars with html tag
     else if (target === TARGET.EDITOR) {
       // if write to editor, we need write it in style also
-      writeChar(TARGET.STYLESHEET, chars);
+      writeChar(TARGET.STYLESHEET, chars, updateView);
       const commentRegex = /(\/\*(?:[^](?!\/\*))*\*)$/;
       const cssPropertiesRegex = /([a-zA-Z- ^\n]*):([^:]*)$/;
       const selectorRegex = /((.|,\r|,\r\n|,\n)*)$/;
@@ -114,7 +107,6 @@ const App: React.FC = () => {
           }
         );
       } else if (chars === '{') {
-        console.log(editorStrBuffer.current.match(selectorRegex));
         editorStrBuffer.current = editorStrBuffer.current.replace(
           selectorRegex,
           '<span class="selector">$1</span>{'
@@ -125,18 +117,16 @@ const App: React.FC = () => {
       if (updateView) {
         setEditorStr(editorStrBuffer.current);
       }
-      return editorStrBuffer.current;
     } else if (target === TARGET.WORK) {
       workBuffer.current += chars;
       if (updateView) {
-        if (pos === workData.length) {
+        if (workBuffer.current.length >= workData.length) {
           setWorkStr(marked.parse(workBuffer.current));
         } else {
           setWorkStr(workBuffer.current);
         }
       }
     }
-    return '';
   }
 
   /**
@@ -154,26 +144,21 @@ const App: React.FC = () => {
     charsPerWirte: number,
     delay: number
   ): Promise<void> {
-    // if skiped animation, just return to end the recursive
-    if (isSkiped.current) {
-      return;
-    }
-    // Write a character or multiple characters to the buffer.
-    const chars: string = targetData.slice(pos, pos + charsPerWirte);
-
-    pos += charsPerWirte;
-    // Ensure we stay scrolled to the bottom.
-    scrollToEnd(target);
-
-    writeChar(target, chars, true, pos);
-
-    // Schedule another write.
-    const endOfSentence = /[.?!]\s$/;
-    const comma = /\D[,]\s$/;
-    const endOfBlock = /[^/]\n\n$/;
-    if (pos < targetData.length) {
+    // write until is end
+    while (pos < targetData.length && !isEnd.current) {
+      // Write a character or multiple characters to the buffer.
+      const chars: string = targetData.slice(pos, pos + charsPerWirte);
+      pos += charsPerWirte;
+      writeChar(target, chars, true);
+      // Ensure we stay scrolled to the bottom.
+      scrollToEnd(target);
+      // regex
+      const endOfSentence = /[.?!]\s$/;
+      const comma = /\D[,]\s$/;
+      const endOfBlock = /[^/]\n\n$/;
       let thisInterval = delay;
       const thisSlice = targetData.slice(pos - 2, pos + 1);
+      // test the wirte chars and wait certain times
       if (comma.test(thisSlice)) {
         thisInterval = delay * 30;
       }
@@ -183,20 +168,22 @@ const App: React.FC = () => {
       if (endOfSentence.test(thisSlice)) {
         thisInterval = delay * 70;
       }
-
+      // wait if paused
       do {
         await Promise.delay(thisInterval);
-      } while (isPasued.current);
-
-      return write(target, targetData, pos, charsPerWirte, delay);
+        // if is end (skip) , break this
+        if (isEnd.current) {
+          break;
+        }
+      } while (isPaused.current);
     }
   }
   function handleSkip(): void {
-    isSkiped.current = !isSkiped.current;
     // clear all buffers
     styleBuffer.current = '';
     editorStrBuffer.current = '';
     workBuffer.current = '';
+    // write to buffers and don't update view
     for (const i of codeData) {
       writeChar(TARGET.EDITOR, i, false);
     }
@@ -206,29 +193,51 @@ const App: React.FC = () => {
     for (const i of workCss) {
       writeChar(TARGET.EDITOR, i, false);
     }
+    // update views
+    setStyle(styleBuffer.current);
     setEditorStr(editorStrBuffer.current);
     setWorkStr(marked(workData));
-  }
-  function handlePause(): void {
-    isPasued.current = !isPasued.current;
-  }
-  async function handleStart(): Promise<void> {
+    // set paused status
+    setIsPausedView(true);
+    // set variable
+    isPaused.current = true;
+    isEnd.current = true;
     styleBuffer.current = '';
     editorStrBuffer.current = '';
     workBuffer.current = '';
-    isSkiped.current = false;
-    isPasued.current = false;
-    setStyle('');
-    setEditorStr('');
-    setWorkStr('');
-    await write(TARGET.EDITOR, codeData, 0, 1, speed);
-    await write(TARGET.WORK, workData, 0, 1, speed);
-    await write(TARGET.EDITOR, workCss, 0, 1, speed / 2);
-    isPasued.current = true;
+  }
+  function handlePause(): void {
+    isPaused.current = true;
+    setIsPausedView(true);
+  }
+  async function handleStart(): Promise<void> {
+    isPaused.current = false;
+    setIsPausedView(false);
+    // if animation is end, restart animation.
+    if (isEnd.current) {
+      isEnd.current = false;
+      styleBuffer.current = '';
+      editorStrBuffer.current = '';
+      workBuffer.current = '';
+      setStyle('');
+      setEditorStr('');
+      setWorkStr('');
+      await write(TARGET.EDITOR, codeData, 0, 1, speed);
+      await write(TARGET.WORK, workData, 0, 1, speed);
+      await write(TARGET.EDITOR, workCss, 0, 1, speed / 2).then(() => {
+        // reset variable
+        styleBuffer.current = '';
+        editorStrBuffer.current = '';
+        workBuffer.current = '';
+        isEnd.current = true;
+        setIsPausedView(true);
+      });
+    }
   }
 
   // hook effect
   useEffect(() => {
+    // just show resume on page loaded
     async function asyncHelper(): Promise<void> {
       handleSkip();
     }
@@ -241,7 +250,7 @@ const App: React.FC = () => {
       <Editor ref={editorRef} code={editorStr} />
       <Work ref={workRef} mdStr={workStr} />
       <Controller
-        pauseStatus={isPasued.current}
+        pauseStatus={isPausedView}
         onStart={handleStart}
         onSkip={handleSkip}
         onPause={handlePause}

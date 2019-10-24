@@ -1,71 +1,63 @@
 /**
- * The resume looks not good, we need to add some style.
+ * The resume looks not good.
+ *
+ * We need to add some style.
  */
 .work {
-  display: block;
-  overflow: auto;
   box-shadow: -4px 4px 2px 0 rgba(0, 0, 0, 0.3);
   padding: 10px;
+  line-height: 20px;
+  /* letter-spacing: 1px; */
+}
+.work h2 {
+  padding: 5px;
+  border-bottom: 1px solid #000;
 }
 .work h1 span {
   font-size: 1em;
 }
-.work h2:nth-child(2) + ul,
-.work h2:nth-child(4) + ul {
-  display: flex;
-  flex-wrap: wrap;
-}
-.work h2:nth-child(2) + ul > li,
-.work h2:nth-child(4) + ul > li {
-  width: 50%;
-  padding: 5px;
-}
 .work a {
   text-decoration: none;
 }
-.work li > p:nth-child(2) {
-  word-break: break-all;
-  white-space: pre-wrap;
-  font-size: 13px;
-  text-indent: 20px;
-  letter-spacing: 0.1px;
-  line-height: 16px;
-}
-.work .education-item {
+.work ul:nth-of-type(1),
+.work ul:nth-of-type(2),
+.work ul:nth-of-type(3) {
   display: flex;
+  flex-wrap: wrap;
 }
-.work .education-item span {
+.work ul:nth-of-type(1) > li,
+.work ul:nth-of-type(2) > li {
+  width: 50%;
+  padding: 5px;
+}
+
+.work ul:nth-of-type(3) > li {
+  width: 100%;
+  padding: 5px;
+}
+.work ul:nth-of-type(3) span {
   margin-right: 2.5rem;
 }
 
-/**
-  * Then, we need to hide our editor
-  */
-@keyframes hide_editor {
-  from {
-  }
-  to {
-    height: 0;
-    padding: 0;
-    border: none;
-  }
-}
-@keyframes show_resume {
-  from {
-    height: 50%;
-  }
-  to {
-    height: 100%;
-  }
+/* Then, we hide our simple editor.
+ *
+ * And resize the resume content.
+ */
+.editor {
+  display: none;
 }
 .work {
-  animation: show_resume 0.5s ease-in-out 0.5s forwards;
-}
-
-.editor {
-  animation: hide_editor 0.2s ease-in-out forwards;
+  width: 100%;
 }
 
 /**
   * Everything is done !
+  * 
+  * This project is inspired by Samuel Reed's resume (https://www.strml.net).
+  * 
+  * I rewirte it with React.
+  * 
+  * If you're interested, you can get project in https://github.com/EscapeB/resume.
+  * 
+  * Edit and make your own resume :)
   */

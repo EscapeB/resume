@@ -7,11 +7,12 @@
  * Here we go!
  *
  * It's an live coding!
-*/
+ */
 
 /**
  * We start by animating... well, everything.
-*/
+ */
+
 * {
   transition: all 1s;
 }
@@ -23,15 +24,15 @@
  *
  * We gonna to make an simple editor.
  *
- * Let's make it.
-*/
+ */
 
 .editor {
+  height: 100%;
+  width: 100%;
   background: #303030;
   border: 1px solid #ccc;
   color: white;
   font-size: 14px;
-  height: 100%;
   overflow: auto;
   font-family: monospace;
   padding: 10px 10px 20px;
@@ -40,22 +41,21 @@
 }
 
 /**
- * This is good, but all the text is white!
- * Let's make it even more readable.
-*/
+ * Looks a little different, right?
+ * 
+ * But we have to go further.
+ */
+
 .comment {
   color: #857f6b;
   font-style: italic;
 }
-
 .selector {
   color: #d7ba7d;
 }
-
 .key {
   color: #9cdcfe;
 }
-
 .value {
   color: #ce9178;
 }
@@ -64,23 +64,29 @@
 }
 
 /**
- * Okay. We're going to start filling up the screen.
- * Let's get ready to do some work.
-*/
+ * The editor fills the entire screen.
+ *
+ * But we need other places to show our main content.
+ * 
+ * We have to do something like this.
+ */
+
 .editor {
-  height: 50%;
+  width: 50%; /*reset the width*/
 }
 
 .work {
-  height: 50%;
+  width: 50%;
+  height: 100%;
   overflow: auto;
-  white-space: pre-wrap;
-  word-break: break-all;
 }
 
 /**
- * The editor is done, let's make the main content of our resume.
+ * The simple editor is done.
  *
- * I wirte my resume in markdown (with some html), and it can be easily tranfered to html
+ * we turn our eyes to the right part
+ *
+ * I wirte my resume in markdown (with some html),
  * 
-*/
+ * which can be easily tranfered to html.
+ */
